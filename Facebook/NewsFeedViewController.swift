@@ -12,8 +12,13 @@ class NewsFeedViewController: UIViewController, UIViewControllerTransitioningDel
     
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var feedImageView: UIImageView!
+    
+    //unnecessary
     var selectedImageView: UIImageView!
+    
     var imageTransition: ImageTransition!
+    var photoArray: [UIImageView]!
+    var selectedPhotoIndex: Int!
     
     @IBOutlet weak var photo1ImageView: UIImageView!
     @IBOutlet weak var photo2ImageView: UIImageView!
@@ -44,18 +49,25 @@ class NewsFeedViewController: UIViewController, UIViewControllerTransitioningDel
     
     @IBAction func onTap(sender: UITapGestureRecognizer) {
         selectedImageView = sender.view as! UIImageView
+        
+        photoArray = [photo1ImageView, photo2ImageView, photo3ImageView, photo4ImageView, photo5ImageView]
+        
+        for i in 0...photoArray.count - 1{
+            if photoArray[i] == selectedImageView{
+                selectedPhotoIndex = i
+            }
+        }
+        
         performSegueWithIdentifier("photoSegue", sender: nil)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         var destinationViewController = segue.destinationViewController as! PhotoViewController
-        
         destinationViewController.modalPresentationStyle = UIModalPresentationStyle.Custom
         imageTransition = ImageTransition()
         imageTransition.feedViewController = self
         imageTransition.photoViewController = destinationViewController
         destinationViewController.transitioningDelegate = imageTransition
-        destinationViewController.photoArray = [photo1ImageView, photo2ImageView, photo3ImageView, photo4ImageView, photo5ImageView]
     }
     
     

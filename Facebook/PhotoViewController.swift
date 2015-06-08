@@ -14,6 +14,9 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var actionButtonsView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
+    var currentImageView: UIImageView!
+    var currentOffset: Int!
+    var selectedPhotoIndex: Int!
     var photoArray: [UIImageView]!
     var image: UIImage!
     @IBOutlet var containerView: UIView!
@@ -23,17 +26,22 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
 
         // Do any additional setup after loading the view.
         scrollView.delegate = self
-        scrollView.contentSize.width = 320 * CGFloat(photoArray.count)
-        scrollView.contentSize.height = 569
         photoImageView.image = image
         photoImageView.clipsToBounds = true
     }
 
     override func viewDidAppear(animated: Bool) {
+        scrollView.contentSize.width = 320 * CGFloat(photoArray.count)
+        scrollView.contentSize.height = 569
+
+        var offSet = 1
 //        for i in 0...photoArray.count-1{
-//            photoArray[i].frame = photoImageView.frame
-//            photoArray[i].frame.origin.x = CGFloat(i * 320)
-//            scrollView.addSubview(photoArray[i])
+//            if i != selectedPhotoIndex{
+//                photoArray[i].frame = photoImageView.frame
+//                photoArray[i].frame.origin.x = CGFloat(offSet * 320)
+//                scrollView.addSubview(photoArray[i])
+//                offSet += 1
+//            }
 //        }
     }
     
@@ -49,19 +57,20 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
     //Rewrite?
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
         return photoImageView
+        //return photoArray[selectedPhotoIndex]
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         // This method is called as the user scrolls
         var yOffset = Float(scrollView.contentOffset.y)
 
-        var alpha = CGFloat(convertValue(yOffset, 0.0, -50.0, 1.0, 0.0))
-        var alphaButtons = CGFloat(convertValue(yOffset, 0.0, -10, 1.0, 0.0))
+        var alpha = CGFloat(convertValue(abs(yOffset), 0.0, 50.0, 1.0, 0.0))
+        var alphaButtons = CGFloat(convertValue(abs(yOffset), 0.0, 10.0, 1.0, 0.0))
+
         scrollView.backgroundColor = UIColor(white: 0, alpha: alpha)
         doneButton.alpha = alphaButtons
         actionButtonsView.alpha = alphaButtons
-        //containerView.backgroundColor = UIColor(white: 0, alpha: alpha)
-        //self.view.backgroundColor = UIColor.clearColor()
+        currentOffset = Int(floor(scrollView.contentOffset.x / 320))
     }
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView){

@@ -15,43 +15,42 @@ class ImageTransition: BaseTransition {
     
     var originFrame: CGRect!
     var destinationFrame: CGRect!
+    
     var window = UIApplication.sharedApplication().keyWindow
    
     override func presentTransition(containerView: UIView, fromViewController: UIViewController, toViewController: UIViewController) {
         
-        var photoViewController = toViewController as! PhotoViewController
         var initialFrame = feedViewController.selectedImageView.frame
-        var transitionImageView = UIImageView()
-        var selectedImageFrame = feedViewController.selectedImageView.frame
         var scrollViewFrame = feedViewController.scrollView.frame
     
-        originFrame = CGRect(x: selectedImageFrame.origin.x + scrollViewFrame.origin.x
-            , y: selectedImageFrame.origin.y + scrollViewFrame.origin.y, width: selectedImageFrame.width, height: selectedImageFrame.height)
+        originFrame = CGRect(x: initialFrame.origin.x + scrollViewFrame.origin.x
+            , y: initialFrame.origin.y + scrollViewFrame.origin.y, width: initialFrame.width, height: initialFrame.height)
         
-        window?.addSubview(transitionImageView)
-        
+        var transitionImageView = UIImageView()
         transitionImageView.image = feedViewController.selectedImageView.image
         transitionImageView.frame = originFrame
         transitionImageView.contentMode = feedViewController.selectedImageView.contentMode
         transitionImageView.clipsToBounds = true
+        window?.addSubview(transitionImageView)
         
         destinationFrame = window?.convertRect(photoViewController.photoImageView.frame, fromView: containerView)
         
         toViewController.view.alpha = 0
         
+        photoViewController.selectedPhotoIndex = feedViewController.selectedPhotoIndex
+        photoViewController.photoArray = feedViewController.photoArray
         photoViewController.photoImageView.image = feedViewController.selectedImageView.image
         
         duration = 1
-        containerView.backgroundColor = UIColor(white: 0, alpha: 0)
         
         UIView.animateWithDuration(duration, animations: {
             
-            transitionImageView.frame.size = photoViewController.photoImageView.frame.size
+            transitionImageView.frame.size = self.photoViewController.photoImageView.frame.size
             transitionImageView.frame.origin = self.destinationFrame.origin
-            containerView.backgroundColor = UIColor(white: 0, alpha: 1)
             
             }) { (finished: Bool) -> Void in
                 toViewController.view.alpha = 1
+
                 transitionImageView.removeFromSuperview()
                 self.finish()
         }
