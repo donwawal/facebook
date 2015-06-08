@@ -18,6 +18,7 @@ class NewsFeedViewController: UIViewController, UIViewControllerTransitioningDel
     
     var imageTransition: ImageTransition!
     var photoArray: [UIImageView]!
+    var initialFrames: [CGRect]!
     var selectedPhotoIndex: Int!
     
     @IBOutlet weak var photo1ImageView: UIImageView!
@@ -31,6 +32,9 @@ class NewsFeedViewController: UIViewController, UIViewControllerTransitioningDel
         
         // Configure the content size of the scroll view
         scrollView.contentSize = CGSizeMake(320, feedImageView.image!.size.height)
+        
+        photoArray = [photo1ImageView, photo2ImageView, photo3ImageView, photo4ImageView, photo5ImageView]
+        initialFrames = [photo1ImageView.frame, photo2ImageView.frame, photo3ImageView.frame, photo4ImageView.frame, photo5ImageView.frame]
     }
     
     override func didReceiveMemoryWarning() {
@@ -50,14 +54,11 @@ class NewsFeedViewController: UIViewController, UIViewControllerTransitioningDel
     @IBAction func onTap(sender: UITapGestureRecognizer) {
         selectedImageView = sender.view as! UIImageView
         
-        photoArray = [photo1ImageView, photo2ImageView, photo3ImageView, photo4ImageView, photo5ImageView]
-        
         for i in 0...photoArray.count - 1{
             if photoArray[i] == selectedImageView{
                 selectedPhotoIndex = i
             }
         }
-        
         performSegueWithIdentifier("photoSegue", sender: nil)
     }
     

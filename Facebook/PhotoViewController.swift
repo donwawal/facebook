@@ -14,11 +14,16 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var actionButtonsView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
+
+    var originFrame: CGRect!
     var currentImageView: UIImageView!
     var currentOffset: Int!
     var selectedPhotoIndex: Int!
+    var selectedPhotoView: UIImageView!
+    
     var photoArray: [UIImageView]!
-    var image: UIImage!
+    var initialFrames: [CGRect]!
+
     @IBOutlet var containerView: UIView!
     
     override func viewDidLoad() {
@@ -26,23 +31,24 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
 
         // Do any additional setup after loading the view.
         scrollView.delegate = self
-        photoImageView.image = image
         photoImageView.clipsToBounds = true
     }
 
     override func viewDidAppear(animated: Bool) {
+        originFrame = initialFrames[selectedPhotoIndex]
+        
         scrollView.contentSize.width = 320 * CGFloat(photoArray.count)
         scrollView.contentSize.height = 569
-
+        
         var offSet = 1
-//        for i in 0...photoArray.count-1{
-//            if i != selectedPhotoIndex{
-//                photoArray[i].frame = photoImageView.frame
-//                photoArray[i].frame.origin.x = CGFloat(offSet * 320)
-//                scrollView.addSubview(photoArray[i])
-//                offSet += 1
-//            }
-//        }
+        for i in 1...photoArray.count-1{
+            photoArray[i].frame = photoImageView.frame
+            photoArray[i].frame.origin.x = CGFloat(offSet * 320)
+            scrollView.addSubview(photoArray[i])
+            offSet += 1
+        }
+        
+        scrollView.contentOffset.x = CGFloat((selectedPhotoIndex) * 320)
     }
     
     override func didReceiveMemoryWarning() {
@@ -54,7 +60,6 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    //Rewrite?
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
         return photoImageView
         //return photoArray[selectedPhotoIndex]
@@ -71,6 +76,11 @@ class PhotoViewController: UIViewController, UIScrollViewDelegate {
         doneButton.alpha = alphaButtons
         actionButtonsView.alpha = alphaButtons
         currentOffset = Int(floor(scrollView.contentOffset.x / 320))
+        
+        if currentOffset > 0 && currentOffset < photoArray.count{
+            selectedPhotoIndex = currentOffset
+            originFrame = initialFrames[selectedPhotoIndex]
+        }
     }
     
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView){
